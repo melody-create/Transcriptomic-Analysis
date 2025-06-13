@@ -2,6 +2,27 @@
 tar -xvf <filename>.tar
 gzip -dk <filename>.gz
 
+# Quality control with FastQC  
+module load fastqc
+fastqc <filename>.fastq.gz
+# Output files: fastqc.out, fastqc.html, and fastqc.zip
 
+# Adapter trimming and quality filtering Fastp
 # Bash script to run on cluster
 #!/bin/sh
+module load fastp/0.21.0
+fastp -i in.R1.fastq.gz -I in.R2.fastq.gz -o out.R1.fastq.gz -O out.R2.fastq.gz
+
+# Change bash file to unix 
+dos2unix <filename>.sh
+
+# Run bash script
+sbatch <filename>.sh
+
+# Build indexed reference genome: GRCz11.fna and GRCz11.gtf input
+STAR --runThreadN 12 --runMode genomeGenerate --genomeDir Danio_index --genomeFastaFiles Danio_rerio.GRCz11.dna.primary_assembly.fa --sjdbGTFfile Danio_rerio.GRCz11.111.gtf --sjdbOverhang 150
+
+# Run STAR aligner (Spliced Transcripts Alignment to a Reference)
+STAR --runThreadN 12 --readFilesIn R1 R2 --readFilesCommand zcat --genomeDir Danio_index --outSAMtype BAM SortedByCoordinate --quantMode GeneCounts --outFileNamePrefix /filename
+
+# STAR un-normalized read counts -> Differential Expression with (DESeq2) 
