@@ -1,0 +1,16 @@
+# Visualize raw pathway data from Qiagen Ingenuity Pathway Analysis 
+
+library(RColorBrewer)
+library(ggplot2)
+
+getwd()
+setwd("F:/")
+tab <- read.csv("filename.csv")
+
+tab$Pathway <- factor(tab$Pathway,levels=unique(tab$Pathway))
+
+ggplot(tab, aes(x = Pathway, fill=Level, y=Value)) + 
+  geom_bar(position="fill", stat="identity") +
+  theme(axis.text.x = element_text(angle = 90, size = 10, colour = "black", vjust = 0.5, hjust = 1, face= "bold")) +
+  scale_y_continuous(expand = c(0,0)) +
+  scale_fill_manual(values = c("blue", "gray60", "gray90", "red"))
