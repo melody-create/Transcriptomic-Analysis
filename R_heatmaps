@@ -1,0 +1,42 @@
+# Adapted from Complex Heatmap https://jokergoo.github.io/ComplexHeatmap-reference/book/introduction.html
+
+if (!requireNamespace("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+BiocManager::install("ComplexHeatmap")
+
+library(tidyverse)
+library(RColorBrewer)
+library(ComplexHeatmap)
+library(heatmaply)
+
+set.seed(9)
+getwd()
+setwd("F:/")
+
+#_________________________________________________________________________________
+#  ** RNA DATA only 30 significant by pvalue for ALL samples **
+tab <- read.csv("filename.csv", row.names = 1)
+tabmatrix <- as.matrix(tab)
+tabmatrix2 = t(scale(t(tabmatrix)))
+
+my_color <- colorRampPalette(c("blue", "white", "red"))    
+my_color_range <- my_color(100)  
+
+# SCALED 
+ht <- Heatmap(tabmatrix2, column_dend_reorder=order(colnames(tab)), 
+        show_row_names = FALSE, col = my_color_range,
+        left_annotation = rowAnnotation(foo = anno_block(gp = gpar(fill = 1), # 1 is black, 8 is gray
+        labels = c("1", "2", "3"),
+        labels_gp = gpar(col = "white", fontsize = 15, fontface = "bold"))),
+        row_km = 3, row_gap = unit(2.5, "mm"), border = TRUE)
+
+# save gene and row order
+ht <- draw(ht)
+order <- row_order(ht)
+orderunlist <- unlist(order)
+tabout <- rownames(tabmatrix2)[orderunlist]
+rownames(tabmatrix2)[orderunlist]
+
+write.csv(tabout, "filename.csv")
+write.csv(order[1], "filename.csv_order1.csv")
+write.csv(order[2], "filename.csv_order2.csv")
