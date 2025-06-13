@@ -1,0 +1,58 @@
+# adapted from https://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html
+library(DESeq2)
+library(ggplot2)
+library(apeglm)
+library(ggrepel)
+
+getwd()
+setwd("C:/")
+cts <- read.csv("cts.csv", row.names = 1)
+coldata <- read.csv("coldata.csv", row.names = 1)
+rownames(coldata)
+colnames(cts)
+
+all(rownames(coldata) %in% colnames(cts))
+all(rownames(coldata) == colnames(cts))
+
+dds <- DESeqDataSetFromMatrix(countData = cts,
+                              colData = coldata,
+                              design = ~ condition + age)
+
+dds$condition <- relevel(dds$condition, ref = "WT")
+
+dds <- DESeq(dds)
+resultsNames(dds) # lists the coefficients
+
+resHT <- results(dds, name="condition_HT_vs_WT")
+resMUT <- results(dds, name="condition_MUT_vs_WT")
+res3v5 <- results(dds, name="age_three_vs_five")
+
+# save results
+write.csv(as.data.frame(resHT), file="condition_HT_vs_WT.csv")
+write.csv(as.data.frame(resMUT), file="condition_MUT_vs_WT.csv")
+write.csv(as.data.frame(res3v5), file="age_three_vs_five.csv")
+
+vsd <- vst(dds, blind=FALSE)
+# rld <- rlog(dds, blind=FALSE)
+head(assay(vsd), 3)
+
+# PCA plot
+plotPCA(vsd, intgroup=c("condition", "age"))
+
+# fancier PCA plot RNA
+pcaData <- plotPCA(vsd, intgroup=c("condition", "age"), returnData=TRUE)
+percentVar <- round(100 * attr(pcaData, "percentVar"))
+
+ggplot(pcaData, aes(PC1, PC2, color=condition, shape=age, stroke=1)) +
+  geom_point(size=2) +
+  #geom_label_repel(label=rownames(coldata), size = 2, nudge_x = 1, nudge_y = 0,) +
+  xlab(paste0("PC1: ",percentVar[1],"% variance")) +
+  ylab(paste0("PC2: ",percentVar[2],"% variance")) +
+  coord_fixed(ratio=2) +
+  scale_color_manual(values = c("HT" = "mediumvioletred",
+                                "MUT"="sienna2",
+                                "WT"="royalblue")) +
+  scale_shape_manual(values = c("five" = 1,
+                                "three"=16))
+
+write.csv(as.data.frame(pcaData), file="all_RNA_pca_data.csv")
