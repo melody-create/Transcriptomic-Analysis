@@ -1,8 +1,7 @@
 # adapted from https://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html
-library(DESeq2)
-library(ggplot2)
-library(apeglm)
-library(ggrepel)
+library(DESeq2) # version 1.42.1
+library(ggplot2) # version 3.5.1
+library(ggrepel) # version 0.9.6
 
 getwd()
 setwd("C:/")
