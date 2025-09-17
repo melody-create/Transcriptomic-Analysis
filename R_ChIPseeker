@@ -4,10 +4,10 @@ BiocManager::install("ChIPseeker")
 BiocManager::install("TxDb.Mmusculus.UCSC.mm39.refGene")
 BiocManager::install("org.Mm.eg.db")
 
-library(ChIPseeker)
-library(TxDb.Mmusculus.UCSC.mm39.refGene)
+library(ChIPseeker) # version 1.40.0
+library(TxDb.Mmusculus.UCSC.mm39.refGene) # version 3.19.0
 txdb <- TxDb.Mmusculus.UCSC.mm39.refGene
-library(org.Mm.eg.db)
+library(org.Mm.eg.db) # version 3.19.1
 
 #_________________________________________________________________________________
 #  ** Schnetz 2010 HIGH thresh**
