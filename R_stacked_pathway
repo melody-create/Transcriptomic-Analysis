@@ -1,7 +1,7 @@
 # Visualize raw pathway data from Qiagen Ingenuity Pathway Analysis 
 
 library(RColorBrewer) # version 1.1.3
-library(ggplot2)
+library(ggplot2) # version 3.5.1
 
 getwd()
 setwd("F:/")
