@@ -13,7 +13,6 @@ getwd()
 setwd("F:/")
 
 #_________________________________________________________________________________
-#  ** RNA DATA only 30 significant by pvalue for ALL samples **
 tab <- read.csv("filename.csv", row.names = 1)
 tabmatrix <- as.matrix(tab)
 tabmatrix2 = t(scale(t(tabmatrix)))
